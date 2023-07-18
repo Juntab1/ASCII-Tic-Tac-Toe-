@@ -1,48 +1,25 @@
-import math
 import os
 import time
-class firstWon():
-    def __init__(self, curr_moves):
-        self.curr_moves = curr_moves
-    
-    def state(self):
-        if ((self.curr_moves[0] == 'x' and self.curr_moves[1] == 'x' and self.curr_moves[2] == 'x') or
-            (self.curr_moves[3] == 'x' and self.curr_moves[4] == 'x' and self.curr_moves[5] == 'x') or
-            (self.curr_moves[6] == 'x' and self.curr_moves[7] == 'x' and self.curr_moves[8] == 'x') or
-            (self.curr_moves[0] == 'x' and self.curr_moves[3] == 'x' and self.curr_moves[6] == 'x') or
-            (self.curr_moves[1] == 'x' and self.curr_moves[4] == 'x' and self.curr_moves[7] == 'x') or
-            (self.curr_moves[2] == 'x' and self.curr_moves[5] == 'x' and self.curr_moves[8] == 'x') or 
-            (self.curr_moves[0] == 'x' and self.curr_moves[4] == 'x' and self.curr_moves[8] == 'x') or
-            (self.curr_moves[2] == 'x' and self.curr_moves[4] == 'x' and self.curr_moves[6] == 'x')):
-            return True
-        else: return False
-    
-    def tie(self):
-        self.not_first_time = False
-        count = 0
-        for val in self.curr_moves:
-            if (isinstance(self.val,int) != True and self.not_first_time):
-                self.count = self.count+1
-        if (self.count == 9):
-            return True
-        self.not_first_time = True
-        return False
 
-class secondWon():
-    def __init__(self, curr_moves):
+# keeps track of if someone has 3 in a row to win or not
+class whoWon():
+    def __init__(self, curr_moves, player_symbol):
         self.curr_moves = curr_moves
+        self.player_symbol = player_symbol
+    
     def state(self):
-        if ((self.curr_moves[0] == 'o' and self.curr_moves[1] == 'o' and self.curr_moves[2] == 'o') or
-            (self.curr_moves[3] == 'o' and self.curr_moves[4] == 'o' and self.curr_moves[5] == 'o') or
-            (self.curr_moves[6] == 'o' and self.curr_moves[7] == 'o' and self.curr_moves[8] == 'o') or
-            (self.curr_moves[0] == 'o' and self.curr_moves[3] == 'o' and self.curr_moves[6] == 'o') or
-            (self.curr_moves[1] == 'o' and self.curr_moves[4] == 'o' and self.curr_moves[7] == 'o') or
-            (self.curr_moves[2] == 'o' and self.curr_moves[5] == 'o' and self.curr_moves[8] == 'o') or 
-            (self.curr_moves[0] == 'o' and self.curr_moves[4] == 'o' and self.curr_moves[8] == 'o') or
-            (self.curr_moves[2] == 'o' and self.curr_moves[4] == 'o' and self.curr_moves[6] == 'o')):
+        if ((self.curr_moves[0] == self.player_symbol and self.curr_moves[1] == self.player_symbol and self.curr_moves[2] == self.player_symbol) or
+            (self.curr_moves[3] == self.player_symbol and self.curr_moves[4] == self.player_symbol and self.curr_moves[5] == self.player_symbol) or
+            (self.curr_moves[6] == self.player_symbol and self.curr_moves[7] == self.player_symbol and self.curr_moves[8] == self.player_symbol) or
+            (self.curr_moves[0] == self.player_symbol and self.curr_moves[3] == self.player_symbol and self.curr_moves[6] == self.player_symbol) or
+            (self.curr_moves[1] == self.player_symbol and self.curr_moves[4] == self.player_symbol and self.curr_moves[7] == self.player_symbol) or
+            (self.curr_moves[2] == self.player_symbol and self.curr_moves[5] == self.player_symbol and self.curr_moves[8] == self.player_symbol) or 
+            (self.curr_moves[0] == self.player_symbol and self.curr_moves[4] == self.player_symbol and self.curr_moves[8] == self.player_symbol) or
+            (self.curr_moves[2] == self.player_symbol and self.curr_moves[4] == self.player_symbol and self.curr_moves[6] == self.player_symbol)):
             return True
         else: return False
 
+# game board
 class board():
     def __init__(self, curr_moves):
         self.curr_moves = curr_moves
@@ -60,6 +37,7 @@ class board():
     |               |               |               |
     -------------------------------------------------"""
 
+# asks the users for their move and updates the game board
 class player_move(): 
     def __init__(self, curr_moves, player,player_symbol):
         self.curr_moves = curr_moves
@@ -74,48 +52,42 @@ class player_move():
         os.system('cls')
         print(board(self.curr_moves).curr())
 
+# overall operation of what happens when the user runs the game is covered here from start to finish
 class game():
     def __init__(self):
-        self.name = "Jun"
         self.array_moves = [1,2,3,4,5,6,7,8,9]
         self.first_player = input("First player enter your name: ")
         self.second_player = input("Second player enter your name: ")
         os.system('cls')
         print(f"{self.first_player} you are x!\n{self.second_player} you are o!")
-        time.sleep(5)
+        time.sleep(3)
         os.system('cls')
         print(board(self.array_moves).curr())
-
-        while (firstWon(self.array_moves).state() == False and secondWon(self.array_moves).state() == False and firstWon(self.array_moves).tie() == False):
+        self.count = 0
+        while (whoWon(self.array_moves,'x').state() == False and whoWon(self.array_moves, 'o').state() == False and self.count < 9):
             player_move(self.array_moves,self.first_player,'x').action()
-            if (firstWon(self.array_moves).state() == False and firstWon(self.array_moves).tie() == False):
+            self.count = self.count+1
+            if (whoWon(self.array_moves, 'x').state() == False and self.count < 9):
                 player_move(self.array_moves,self.second_player,'o').action()
-        if (firstWon(self.array_moves).state() == True):
+                self.count = self.count+1
+        if (whoWon(self.array_moves,'x').state() == True):
             print(f"{self.first_player} won!")
-        elif(firstWon(self.array_moves).tie() == True):
+        elif(self.count >= 9):
             print("It's a tie!!!")
         else:
             print(f"{self.second_player} won!")
 
+# checks if the user wants to play the game again or not
 def main():
     should_exit = False
     while (not should_exit):
+        os.system('cls')
         game()
-        playAgain = None
-        while (playAgain != "Y" and playAgain != "N"):
+        playAgain = "A"
+        while (playAgain.strip() != "Y" and playAgain.strip() != "N"):
             playAgain = input("Would you like to play again? (Y or N): ")
-        if (playAgain == "N"):
+        if (playAgain.strip() == "N"):
             should_exit = True
-
-
-    # playAgain = None
-    # while (playAgain != "Y" and playAgain != "N"):
-    #     playAgain = input("Would you like to play again? (Y or N): ")
-    # if (playAgain == "Y"):
-    #     os.system('cls')
-    #     game()
-    # else:
-    #     exit()
 
 if __name__ == "__main__":
     main()
